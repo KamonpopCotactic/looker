@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      padding: 10px;
+    }
+    .grid-item {
+      background-color: #ffffff;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .grid-item img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .metrics {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-container"></div>
+  <script>
+    const dscc = require('@google/dscc');
+    const d3 = require('d3');
+
+    dscc.subscribeToData(function(data) {
+      // data is the data provided by Looker Studio
+      const imageData = data.tables.DEFAULT;
+      const container = d3.select('.grid-container');
+      
+      // Clear previous items
+      container.html('');
+      
+      // Add new items
+      imageData.forEach(row => {
+        const imageUrl = row['Image URL'][0];
+        const impressions = row['Impressions'][0];
+        const frequency = row['Frequency'][0];
+        
+        container.append('div')
+          .attr('class', 'grid-item')
+          .html(`
+            <img src="${imageUrl}" alt="Image">
+            <div class="metrics">
+              <div>Impressions: ${impressions}</div>
+              <div>Frequency: ${frequency}</div>
+            </div>
+          `);
+      });
+    });
+  </script>
+</body>
+</html>
